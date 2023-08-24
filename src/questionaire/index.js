@@ -247,8 +247,9 @@ function generateCodeFromAST(ast) {
     generatedCode = generateCode(statement);
   }
 
-  let finalCode = `function({${questionIdentifies.join(',')}}){
+  let finalCode = `return function checkData({${questionIdentifies.join(',')}, ...other}){
     ${generatedCode}
+    return {${questionIdentifies.join(',')}, ...other};
   }`;
 
   return finalCode;
@@ -301,8 +302,14 @@ const dslCode = 'if (Q1.answer == 1) then show Q2';
 const tokens = lexer(dslCode);
 const ast = syntaxAnalysis(tokens);
 
-const generatedCode = generateCodeFromAST(ast);
+let generatedCode = generateCodeFromAST(ast);
 
 console.log("Tokens:", tokens);
 console.log("AST:", JSON.stringify(ast));
 console.log("Generated Code:\n", generatedCode);
+
+let check = new Function(generatedCode)();
+let data = {Q1:{show: true, answer: 1},Q2:{show: false}, Q3:{show: false}};
+
+let newData = check(data);
+console.log(newData);
