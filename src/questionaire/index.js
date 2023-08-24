@@ -25,7 +25,7 @@ function lexer(input) {
     }
 
     if (char === '.') {
-      tokens.push({ type: 'DOT' });
+      tokens.push({ type: 'DOT' ,value: '.'});
       currentIndex++;
       continue;
     }
@@ -116,7 +116,7 @@ function syntaxAnalysis(tokens) {
       while (token && token.type === 'DOT') {
         currentIndex++; // 跳过 DOT
         expression.right = parseTerm();
-        expression.left = { type: 'Expression', left: expression.left, operator: { type: 'DOT' }, right: expression.right };
+        expression.left = { type: 'Expression', left: expression.left, operator: { type: 'DOT', value: '.' }, right: expression.right };
         token = tokens[currentIndex]; // 获取当前的下一个操作符或者标识符
       }
 
@@ -128,7 +128,7 @@ function syntaxAnalysis(tokens) {
 
       return expression;
     } else if (token.type === 'NUMBER'){
-      return {type:'NUMBER',value:token};
+      return token.value;
     }
 
     throw new TypeError('Invalid token: ' + token.type);
@@ -239,27 +239,53 @@ function semanticAnalysis(ast) {
 }
 
 // 代码生成
-// function codeGeneration(ast) {
-//   let generatedCode = "";
+let questionIdentifies = [];
+function generateCodeFromAST(ast) {
+  let generatedCode = "";
 
-//   for (const statement of ast.body) {
-//     if (statement.type === "IfStatement") {
-//       generatedCode += `if (${statement.condition}) {\n`;
-//       generatedCode += `  ${statement.thenAction};\n`;
-//       generatedCode += `} else {\n`;
-//       generatedCode += `  ${statement.elseAction};\n`;
-//       generatedCode += `}\n`;
-//     }
-//     else if (statement.type === "ShowStatement") {
-//       generatedCode += `show ${statement.question};\n`;
-//     }
-//     else if (statement.type === "ReplaceStatement") {
-//       generatedCode += `replace "${statement.search}" with "${statement.replace}" in ${statement.question};\n`;
-//     }
-//   }
+  for (const statement of ast.body) {
+    generatedCode = generateCode(statement);
+  }
 
-//   return generatedCode;
-// }
+  let finalCode = `function({${questionIdentifies.join(',')}}){
+    ${generatedCode}
+  }`;
+
+  return finalCode;
+}
+
+function generateCode(node) {
+  if(typeof node !== 'object'){
+    if(typeof node === 'string'){
+      return node;
+    }
+    return '';
+  } 
+  let generatedCode = '';
+
+  if (node.type === "IfStatement") {
+    generatedCode += `if (${generateCode(node.condition)}) {\n`;
+    generatedCode += `  ${generateCode(node.statement)};\n`;
+    generatedCode += `} `;
+  } else if (node.type === "Expression") {
+    generatedCode += `${generateCode(node.left)}${ generateCode(node.operator)}${generateCode(node.right)}`;
+  } else if (node.type === "IDENTIFIER"){
+    // Q1,Q2这些变量
+    let questionReg = /^Q(\d+)$/;
+    if(!!node.value && questionReg.test(node.value)){
+      questionIdentifies.push(node.value);
+    } 
+
+    generatedCode += `${node.value}`;
+
+  } else if (["NUMBER","COMPARISON_OP","DOT"].includes(node.type)) {
+    generatedCode += `${node.value}`;
+  } else if (node.type === 'ShowStatement') {
+    generatedCode += `${generateCode(node.question)}.show = true;`
+  }
+
+  return generatedCode;
+}
 
 // 执行流程
 
@@ -274,9 +300,9 @@ const dslCode = 'if (Q1.answer == 1) then show Q2';
 
 const tokens = lexer(dslCode);
 const ast = syntaxAnalysis(tokens);
-// const analyzedAst = semanticAnalysis(ast);
-// const generatedCode = codeGeneration(analyzedAst);
+
+const generatedCode = generateCodeFromAST(ast);
 
 console.log("Tokens:", tokens);
-console.log("AST:", ast);
-// console.log("Generated Code:\n", generatedCode);
+console.log("AST:", JSON.stringify(ast));
+console.log("Generated Code:\n", generatedCode);
