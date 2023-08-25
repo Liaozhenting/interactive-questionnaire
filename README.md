@@ -1,9 +1,9 @@
 # 交互式问卷的实现，通过DSL的方式
 
-`
+```
   if (Q1.answer == 0) then show Q2
   if (Q1.answer == 1) then show Q3
-`
+```
 
 如果问题1的选项为0，展示问题2。如果问题1的选项为1，展示问题3。
 
@@ -17,7 +17,11 @@
 
 # Implementation of interactive questionnaire through DSL
 
-`if (Q1.answer == 1) then show Q2`
+```
+  if (Q1.answer == 0) then show Q2
+  if (Q1.answer == 1) then show Q3
+```
+
 
 If the selected option for question 1 is 0, display question 2.If the selected option for question 1 is 1, display question 3.
 
