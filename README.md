@@ -4,7 +4,7 @@
 
 如果问题1的选项为1，展示问题2。
 
-本项目为学习目的。前端实际开发中，如果不做低代码平台，甚至可以直接写一段完整JS代码让后端传给前端来运行控制问卷的逻辑。。。
+本项目为学习、展示技术目的。前端实际开发中，如果不做低代码平台，甚至可以直接写一段完整JS代码让后端传给前端来运行控制问卷的逻辑,不需要DSL。。。
 
 （开发完善中。。。）
 
@@ -14,6 +14,6 @@
 
 If the selected option for question 1 is 1, display question 2.
 
-This project is for learning purposes. In actual frontend development, if a low-code platform is not utilized, it is even possible to directly write a complete JavaScript code segment for the backend to pass to the frontend to execute and control the logic of a questionnaire.
+This project is for learning and showing skills purposes. In actual frontend development, if a low-code platform is not utilized, it is even possible to directly write a complete JavaScript code segment for the backend to pass to the frontend to execute and control the logic of a questionnaire. Using DSL is not necessary...
 
 (Under development...)
