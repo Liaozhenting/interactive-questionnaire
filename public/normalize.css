@@ -1,0 +1,57 @@
+/* Reset styles */
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+code,
+hr,
+dl,
+dd,
+ol,
+ul,
+figure,
+fieldset,
+legend,
+button,
+input,
+textarea,
+select {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Set default font family and size */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+}
+
+/* Set default line height */
+body,
+p {
+  line-height: 1.5;
+}
+
+/* Remove list styles */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Set default link styles */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Set default box-sizing for all elements */
+* {
+  box-sizing: inherit;
+}
