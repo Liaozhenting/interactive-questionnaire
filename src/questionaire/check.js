@@ -2,7 +2,7 @@ const check = function (dslCode) {
   // 词法分析器
   function lexer(input) {
     const tokens = [];
-    const keywords = ['if', 'then', 'show'];
+    const keywords = ['if', 'then', 'else', 'show'];
 
     let currentIndex = 0;
     while (currentIndex < input.length) {
@@ -12,6 +12,12 @@ const check = function (dslCode) {
         currentIndex++;
         continue;
       }
+
+      // 分隔符 
+      // if(char === ';') {
+      //   currentIndex++;
+      //   continue;
+      // }
 
       if (char === '(') {
         tokens.push({ type: 'LPAREN' });
@@ -175,10 +181,11 @@ const check = function (dslCode) {
       let token = tokens[currentIndex];
 
       if (token.type === "IF") {
-        token = tokens[++currentIndex]; // 跳过 IF
+        currentIndex++; // 跳过 IF
         const condition = parseCondition();
-        token = tokens[++currentIndex]; // 跳过条件末尾的 RPAREN
-        token = tokens[++currentIndex]; // 跳过 THEN
+        currentIndex++; // 跳过条件末尾的 RPAREN
+        currentIndex++; // 跳过 THEN
+
         const statement = parseStatement();
 
         const ifStatement = {
@@ -189,8 +196,7 @@ const check = function (dslCode) {
 
         ast.body.push(ifStatement);
         currentIndex += 6;
-      }
-      else if (token.type === "SHOW") {
+      } else if (token.type === "SHOW") {
         const question = tokens[currentIndex + 1];
 
         const showStatement = {
@@ -259,13 +265,15 @@ const check = function (dslCode) {
     if (node.type === "IfStatement") {
       generatedCode += `if (${generateCode(node.condition)}) {\n`;
       generatedCode += `  ${generateCode(node.statement)};\n`;
-      generatedCode += `} `;
+      generatedCode += `} else {`;
+      generatedCode += `  ${generateUndoCode(node.statement)};\n`;
+      generatedCode += `}`;
     } else if (node.type === "Expression") {
       generatedCode += `${generateCode(node.left)}${generateCode(node.operator)}${generateCode(node.right)}`;
     } else if (node.type === "IDENTIFIER") {
       // Q1,Q2这些变量
       let questionReg = /^Q(\d+)$/;
-      if (!!node.value && questionReg.test(node.value)) {
+      if (!!node.value && questionReg.test(node.value) && !questionIdentifies.includes(node.value)) {
         questionIdentifies.push(node.value);
       }
 
@@ -277,6 +285,14 @@ const check = function (dslCode) {
       generatedCode += `${generateCode(node.question)}.show = true;`
     }
 
+    return generatedCode;
+  }
+
+  function generateUndoCode(node){
+    let generatedCode = '';
+    if (node.type === 'ShowStatement') {
+      generatedCode += `${generateCode(node.question)}.show = false`
+    }
     return generatedCode;
   }
 
@@ -297,9 +313,8 @@ const check = function (dslCode) {
   console.log("AST:", JSON.stringify(ast));
   console.log("Generated Code:\n", generatedCode);
   return new Function(generatedCode)();
-  // return generatedCode;
 }
 
 export default check;
 
-// TODO else语句，replace语句
+// TODO replace语句
