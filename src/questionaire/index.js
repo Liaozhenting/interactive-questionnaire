@@ -56,7 +56,6 @@ class Questionnaire extends Component {
     const { qNames } = this.state;
     return (
       <div>
-        <h2>Questionnaire</h2>
         <ul>
             {qNames.map((qName)=>{
               let ele = this.getQuestionEntity(qName);
