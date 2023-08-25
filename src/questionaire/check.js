@@ -155,14 +155,15 @@ const check = function (dslCode) {
     function parseStatement() {
       let token = tokens[currentIndex];
 
-      if (token.type === 'IDENTIFIER') {
-        let action = { type: 'Action', command: null };
+      // if (token.type === 'IDENTIFIER') {
+      //   let action = { type: 'Action', command: null };
 
-        action.command = token.value;
-        currentIndex++;
+      //   action.command = token.value;
+      //   currentIndex++;
 
-        return action;
-      } else if (token.type === "SHOW") {
+      //   return action;
+      // } else 
+      if (token.type === "SHOW") {
         const question = tokens[currentIndex + 1];
 
         const showStatement = {
@@ -195,7 +196,7 @@ const check = function (dslCode) {
         };
 
         ast.body.push(ifStatement);
-        currentIndex += 6;
+        // currentIndex += 6;
       } else if (token.type === "SHOW") {
         const question = tokens[currentIndex + 1];
 
@@ -241,9 +242,10 @@ const check = function (dslCode) {
   function generateCodeFromAST(ast) {
     let generatedCode = "";
 
-    for (const statement of ast.body) {
-      generatedCode = generateCode(statement);
-    }
+    generatedCode = ast.body.reduce((prev, currentStatement)=> {
+      return prev+generateCode(currentStatement)
+    }, generatedCode)
+    
 
     let finalCode = `return function checkData({${questionIdentifies.join(',')}, ...other}){
     ${generatedCode}
@@ -306,7 +308,7 @@ const check = function (dslCode) {
   //   replace Q4.name with (Q2.answer || Q3.answer);
   // `;
 
-  const tokens = lexer(dslCode.trim());
+  const tokens = lexer(dslCode);
   const ast = syntaxAnalysis(tokens);
   const generatedCode = generateCodeFromAST(ast);
   console.log("Tokens:", tokens);

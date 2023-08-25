@@ -5,6 +5,7 @@ function App() {
   const questionnaireInfo = {
     rule : `
     if (Q1.answer == 0) then show Q2
+    if (Q1.answer == 1) then show Q3
     `,
     data :[
       {
@@ -17,6 +18,13 @@ function App() {
       {
         qName: 'Q2',
         text: '你玩过只狼吗？',
+        options: ['玩过','没有'],
+        answer: null,
+        show: false
+      },
+      {
+        qName: 'Q3',
+        text: '你玩过文明吗？',
         options: ['玩过','没有'],
         answer: null,
         show: false
