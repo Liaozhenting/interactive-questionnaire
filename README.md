@@ -1,6 +1,6 @@
 # 交互式问卷的实现，通过DSL的方式
 
-自定义一段DSL
+参考腾讯问卷，自定义一段DSL
 ```
   if (Q1.answer == 0) then show Q2
   if (Q1.answer == 1) then show Q3
